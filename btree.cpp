@@ -15,7 +15,16 @@ public:
     class simple_search{
     public:
         int operator() (container_t a, value_t v){
-            return 0;
+            int i = 0;
+            for(auto iter = a.begin(); iter != a.end(); iter++)
+            {
+                if(v == (*iter))
+                {
+                    return i;
+                }
+                i++;
+            }
+            return -1;
         }
     };
 
@@ -39,8 +48,33 @@ public:
 
     class binary_search{
     public:
+        int binarySearch(container_t arr, int left, int right, int x)
+        {
+            if (right >= left) {
+                int mid = left + (right - left) / 2;
+
+                if (arr[mid] == x)
+                    return mid;
+
+                if (arr[mid] > x)
+                    return binarySearch(arr, left, mid - 1, x);
+
+
+                return binarySearch(arr, mid + 1, right, x);
+            }
+
+            return -1;
+        }
         int operator() (container_t a, value_t v){
-            return 0;
+            int counter = 0;
+            for(auto iter = a.begin(); iter != a.end(); iter++)
+            {
+                if(*iter != -1)
+                {
+                    counter++;
+                }
+            }
+            return binarySearch(a, 0, counter, v);
         }
     };
 
@@ -86,6 +120,15 @@ public:
         counter++;
     }
 
+    bool isLeaf()
+    {
+        for(auto iter = ptrs.begin(); iter != ptrs.end(); iter++)
+        {
+            if(*iter != NULL)return false;
+        }
+        return true;
+    }
+
     BNode(void):order(S){
         keys=container_t(order,-1);
         ptrs=pcontainer_t(order+1,NULL);
@@ -115,6 +158,24 @@ public:
 
     ~BTree(void){}
 
+    Node* searchNode(Node* ptr, value_t val)
+    {
+        int i = 0;
+        while(i < ptr->counter && val > ptr->keys[i])
+        {
+            i++;
+        }
+        if(val == ptr->keys[i])
+        {
+            return ptr;
+        }
+        if(ptr->isLeaf())
+        {
+            return NULL;
+        }
+
+        return searchNode(ptr->ptrs[i], val);
+    }
 
     bool checkOverflow(Node* ptr)
     {
@@ -224,10 +285,15 @@ public:
         nodo = newroot;
     }
 
-    bool find(const value_t = 0) const{
-        // TODO :: SEARCH
-        // search(x); inside each page
-        return false;
+    bool find(value_t val) {
+
+        auto nodetocheck = searchNode(root, val);
+        if(nodetocheck==NULL || search(nodetocheck->keys, val) <= -1)
+        {
+            return false;
+        }
+        else{return true;}
+
     }
 
     friend std::ostream& operator<<(std::ostream& out, BTree<T,S> tree){
@@ -264,14 +330,18 @@ int main() {
     tree.insert(1);
     tree.insert(2);
     tree.insert(3);
-     tree.insert(4);
-     //tree.insert(2);
-     //tree.insert(3);
+    tree.insert(4);
+    tree.insert(5);
+    tree.insert(6);
+    cout<<tree.find(6);
 
 
-    tree.print1();
 
-    /*typedef SS_Traits<float> strait_t;
-    BTree<strait_t,10> stree;
-    std::cout<<stree<< std::endl;*/
+    typedef SS_Traits<int> strait_t;
+    BTree<strait_t,3> stree;
+    stree.insert(1);
+    stree.insert(2);
+    stree.insert(3);
+    stree.insert(4);
+    cout<<stree.find(2);
 }
