@@ -307,6 +307,9 @@ public:
         cout<< "PREORDER PRINT"<<endl;
         cout << "________________________\n";
         preprint(root);
+        cout<< "POSTORDER PRINT"<<endl;
+        cout << "________________________\n";
+        postprint(root);
 
     }
 
@@ -331,25 +334,26 @@ public:
         }
     }
 
+    void postprint(Node *ptr) {
+        if (ptr) {
+            for(auto iter = ptr->ptrs.begin(); iter != ptr->ptrs.end(); iter++)
+            {
+                postprint(*iter);
+            }
+            printKeys(ptr);
+
+        }
+    }
+
 };
 
 int main() {
     typedef BS_Traits<int> btrait_t;
     BTree<btrait_t,4> tree;
-    tree.insert(14);
-    tree.insert(13);
-    tree.insert(12);
-    tree.insert(11);
-    tree.insert(10);
-    tree.insert(9);
-    tree.insert(8);
-    tree.insert(7);
-    tree.insert(6);
-    tree.insert(5);
-    tree.insert(4);
-    tree.insert(3);
-    tree.insert(2);
-    tree.insert(1);
+    for(int i = 1; i<=20; i++)
+    {
+        tree.insert(i);
+    }
 
 
 
