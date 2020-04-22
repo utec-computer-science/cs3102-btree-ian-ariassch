@@ -80,6 +80,7 @@ public:
 
     class pre_order_print{
     public:
+
         void operator() (void){
             std::cout << "pre order" << std::endl;
         }
@@ -229,7 +230,7 @@ public:
 
         node->insertinNode(pos, nodesplit->keys[iter]);
         iter--;
-        left->ptrs[i] = nodesplit->ptrs[iter];
+        left->ptrs[i] = nodesplit->ptrs[middleindex];
 
 
         iter+=2;
@@ -303,22 +304,30 @@ public:
     }
 
     void print1() {
-        print2(root, 0);
-        std::cout << "________________________\n";
+        cout<< "PREORDER PRINT"<<endl;
+        cout << "________________________\n";
+        preprint(root);
+
     }
 
-    void print2(Node *ptr, int level) {
-        if (ptr) {
-            int i;
-            for (i = ptr->counter - 1; i > 0; i--) {
-                print2(ptr->ptrs[i + 1], level + 1);
+    void printKeys(Node *node)
+    {
+        for(auto iter = node->keys.begin(); iter != node->keys.end(); iter++)
+        {
+            if((*iter) != -1)
+            cout<<(*iter)<<" ";
+        }
+        cout<<endl;
+    }
 
-                for (int k = 0; k < level; k++) {
-                    std::cout << "    ";
-                }
-                std::cout << ptr->keys[i] << "\n";
+    void preprint(Node *ptr) {
+        if (ptr) {
+            printKeys(ptr);
+            for(auto iter = ptr->ptrs.begin(); iter != ptr->ptrs.end(); iter++)
+            {
+                preprint(*iter);
             }
-            print2(ptr->ptrs[i + 1], level + 1);
+
         }
     }
 
@@ -327,21 +336,39 @@ public:
 int main() {
     typedef BS_Traits<int> btrait_t;
     BTree<btrait_t,4> tree;
-    tree.insert(1);
-    tree.insert(2);
-    tree.insert(3);
-    tree.insert(4);
-    tree.insert(5);
+    tree.insert(14);
+    tree.insert(13);
+    tree.insert(12);
+    tree.insert(11);
+    tree.insert(10);
+    tree.insert(9);
+    tree.insert(8);
+    tree.insert(7);
     tree.insert(6);
+    tree.insert(5);
+    tree.insert(4);
+    tree.insert(3);
+    tree.insert(2);
+    tree.insert(1);
+
+
+
+
+
+
+
     cout<<tree.find(6);
 
 
 
-    typedef SS_Traits<int> strait_t;
+    typedef SS_Traits<char> strait_t;
     BTree<strait_t,3> stree;
-    stree.insert(1);
-    stree.insert(2);
-    stree.insert(3);
-    stree.insert(4);
-    cout<<stree.find(2);
+    stree.insert('a');
+    stree.insert('b');
+    stree.insert('c');
+    stree.insert('d');
+    cout<<stree.find('b');
+    cout<<endl;
+
+    tree.print1();
 }
