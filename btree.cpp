@@ -28,15 +28,7 @@ public:
         }
     };
 
-    class post_order_print{
-    public:
-        void operator() (void){
-            std::cout << "post order" << std::endl;
-        }
-    };
-
     typedef simple_search functor_t;
-    typedef post_order_print print_t;
 };
 
 template <typename T>
@@ -78,16 +70,8 @@ public:
         }
     };
 
-    class pre_order_print{
-    public:
-
-        void operator() (void){
-            std::cout << "pre order" << std::endl;
-        }
-    };
 
     typedef binary_search functor_t;
-    typedef pre_order_print print_t;
 };
 
 template <typename T, int S>
@@ -139,13 +123,82 @@ public:
     ~BNode(void){}
 };
 
-template <typename T, int S>
+template<typename N>
+class PrePrint
+{
+  public:
+  class pre_order
+  {
+    void printKeys(N *node)
+    {
+        for(auto iter = node->keys.begin(); iter != node->keys.end(); iter++)
+        {
+            if((*iter) != -1)
+            cout<<(*iter)<<" ";
+        }
+        cout<<endl;
+    }
+    public:
+    void print(N *ptr)
+    {
+      if (ptr) {
+          printKeys(ptr);
+          for(auto iter = ptr->ptrs.begin(); iter != ptr->ptrs.end(); iter++)
+          {
+              print(*iter);
+          }
+
+      }
+    }
+    void operator()(N *node){
+      print(node);
+    }
+  };
+    typedef pre_order print_t;
+};
+
+
+template<typename N>
+class PostPrint
+{
+  public:
+  class post_order
+  {
+    void printKeys(N *node)
+    {
+        for(auto iter = node->keys.begin(); iter != node->keys.end(); iter++)
+        {
+            if((*iter) != -1)
+            cout<<(*iter)<<" ";
+        }
+        cout<<endl;
+    }
+    public:
+    void print(N *ptr)
+    {
+      if (ptr) {
+          for(auto iter = ptr->ptrs.begin(); iter != ptr->ptrs.end(); iter++)
+          {
+              print(*iter);
+          }
+          printKeys(ptr);
+      }
+    }
+    void operator()(N *node){
+      print(node);
+    }
+  };
+    typedef post_order print_t;
+};
+
+
+template <typename P, typename T, int S>
 class BTree {
 public:
     typedef typename T::value_t value_t;
     typedef typename T::container_t container_t;
     typedef typename T::functor_t functor_t;
-    typedef typename T::print_t print_t;
+    typedef typename P::print_t print_t;
     typedef BNode<T,S> Node;
 
     Node* root;
@@ -297,82 +350,34 @@ public:
 
     }
 
-    friend std::ostream& operator<<(std::ostream& out, BTree<T,S> tree){
-        tree.print();// (out)
-        // IN PRE POST LEVEL ORDER
+    friend std::ostream& operator<<(std::ostream& out, BTree<P,T,S> tree){
+        tree.print(tree.root);
         return out;
     }
 
-    void print1() {
-        cout<< "PREORDER PRINT"<<endl;
-        cout << "________________________\n";
-        preprint(root);
-        cout<< "POSTORDER PRINT"<<endl;
-        cout << "________________________\n";
-        postprint(root);
-
-    }
-
-    void printKeys(Node *node)
-    {
-        for(auto iter = node->keys.begin(); iter != node->keys.end(); iter++)
-        {
-            if((*iter) != -1)
-            cout<<(*iter)<<" ";
-        }
-        cout<<endl;
-    }
-
-    void preprint(Node *ptr) {
-        if (ptr) {
-            printKeys(ptr);
-            for(auto iter = ptr->ptrs.begin(); iter != ptr->ptrs.end(); iter++)
-            {
-                preprint(*iter);
-            }
-
-        }
-    }
-
-    void postprint(Node *ptr) {
-        if (ptr) {
-            for(auto iter = ptr->ptrs.begin(); iter != ptr->ptrs.end(); iter++)
-            {
-                postprint(*iter);
-            }
-            printKeys(ptr);
-
-        }
-    }
 
 };
 
 int main() {
     typedef BS_Traits<int> btrait_t;
-    BTree<btrait_t,4> tree;
+    typedef PrePrint<BNode<btrait_t, 4>> preprint_t;
+    typedef PostPrint<BNode<btrait_t, 4>> postprint_t;
+    BTree<postprint_t, btrait_t,4> tree;
     for(int i = 1; i<=20; i++)
     {
         tree.insert(i);
     }
 
+    cout<<tree;
 
-
-
-
-
-
-    cout<<tree.find(6);
-
-
-
-    typedef SS_Traits<char> strait_t;
+    /*typedef SS_Traits<char> strait_t;
     BTree<strait_t,3> stree;
     stree.insert('a');
     stree.insert('b');
     stree.insert('c');
     stree.insert('d');
     cout<<stree.find('b');
-    cout<<endl;
+    cout<<endl;*/
 
-    tree.print1();
+    //stree.print1();
 }
