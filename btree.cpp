@@ -151,6 +151,7 @@ class PrePrint
       }
     }
     void operator()(N *node){
+      cout<<endl<<"PRE ORDER"<<endl;
       print(node);
     }
   };
@@ -185,6 +186,7 @@ class PostPrint
       }
     }
     void operator()(N *node){
+      cout<<endl<<"POST ORDER"<<endl;
       print(node);
     }
   };
@@ -362,13 +364,19 @@ int main() {
     typedef BS_Traits<int> btrait_t;
     typedef PrePrint<BNode<btrait_t, 4>> preprint_t;
     typedef PostPrint<BNode<btrait_t, 4>> postprint_t;
-    BTree<postprint_t, btrait_t,4> tree;
+    BTree<preprint_t, btrait_t,4> pretree;
+    BTree<postprint_t, btrait_t,4> posttree;
     for(int i = 1; i<=20; i++)
     {
-        tree.insert(i);
+        pretree.insert(i);
+        posttree.insert(i);
     }
 
-    cout<<tree;
+    cout<<pretree;
+
+
+
+    cout<<posttree;
 
     /*typedef SS_Traits<char> strait_t;
     BTree<strait_t,3> stree;
